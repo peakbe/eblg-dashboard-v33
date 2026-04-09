@@ -7,18 +7,15 @@
     <!-- Responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" 
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
-    <!-- MarkerCluster -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
-
-    <!-- Heatmap -->
-    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
-    <!-- PolylineDecorator -->
-    <script src="https://unpkg.com/leaflet-polylinedecorator"></script>
+    <!-- MarkerCluster CSS -->
+    <link rel="stylesheet" 
+          href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+    <link rel="stylesheet" 
+          href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
 
     <!-- Styles -->
     <link rel="stylesheet" href="./css/style.css">
@@ -26,113 +23,97 @@
 
 <body>
 
-<!-- ======================================================
-     SIDEBAR
-====================================================== -->
-<div id="sidebar" class="sidebar">
+    <!-- ======================================================
+         SIDEBAR
+    ====================================================== -->
+    <div id="sidebar" class="sidebar">
+        <div id="sidebar-toggle" class="sidebar-toggle">☰</div>
 
-    <div id="sidebar-toggle" class="sidebar-toggle">☰</div>
+        <section class="panel">
+            <h2>Météo</h2>
+            <div id="metar" class="data-block">Chargement METAR…</div>
+            <div id="taf" class="data-block">Chargement TAF…</div>
+        </section>
 
-    <!-- METAR -->
-    <section class="panel">
-        <h2>Météo</h2>
-        <div id="metar" class="data-block">Chargement METAR…</div>
-        <div id="taf" class="data-block">Chargement TAF…</div>
-    </section>
+        <section class="panel">
+            <h2>Piste active</h2>
+            <div id="runway-panel" class="data-block">—</div>
+        </section>
 
-    <!-- RUNWAY PANEL -->
-    <section class="panel">
-        <h2>Piste active</h2>
-        <div id="runway-panel" class="data-block">—</div>
-    </section>
+        <section class="panel">
+            <h2>Départs</h2>
+            <div id="fids" class="fids-container">
+                <div class="fids-row">Chargement FIDS…</div>
+            </div>
+        </section>
 
-    <!-- FIDS -->
-    <section class="panel">
-        <h2>Départs</h2>
-        <div id="fids" class="fids-container">
-            <div class="fids-row">Chargement FIDS…</div>
-        </div>
-    </section>
+        <section class="panel">
+            <h2 id="sono-header">
+                Sonomètres <span id="sono-toggle">⯆</span>
+            </h2>
+            <div id="sono-panel">
+                <div id="sono-list" class="sono-list"></div>
+            </div>
+        </section>
 
-    <!-- SONOMETERS -->
-    <section class="panel">
-        <h2 id="sono-header">
-            Sonomètres <span id="sono-toggle">⯆</span>
-        </h2>
-        <div id="sono-panel">
-            <div id="sono-list" class="sono-list"></div>
-        </div>
-    </section>
+        <section class="panel">
+            <h2>Statut API</h2>
+            <div id="status-panel" class="status-panel"></div>
+        </section>
+    </div>
 
-    <!-- STATUS PANEL -->
-    <section class="panel">
-        <h2>Statut API</h2>
-        <div id="status-panel" class="status-panel"></div>
-    </section>
+    <!-- ======================================================
+         DETAIL PANEL
+    ====================================================== -->
+    <div id="detail-panel" class="detail-panel hidden">
+        <h2 id="detail-title">—</h2>
+        <p><b>Adresse :</b> <span id="detail-address">—</span></p>
+        <p><b>Commune :</b> <span id="detail-town">—</span></p>
+        <p><b>Statut :</b> <span id="detail-status">—</span></p>
+        <p><b>Distance piste :</b> <span id="detail-distance">—</span></p>
+    </div>
 
-</div>
+    <!-- ======================================================
+         MAP
+    ====================================================== -->
+    <div id="map"></div>
 
+    <!-- ======================================================
+         FLOATING BUTTONS
+    ====================================================== -->
+    <div class="floating-buttons">
+        <button id="toggle-heatmap" class="float-btn">Heatmap</button>
+        <button id="toggle-clusters" class="float-btn">Clusters</button>
+        <button id="play-history" class="float-btn">Historique</button>
+    </div>
 
-<!-- ======================================================
-     DETAIL PANEL (RIGHT SIDE)
-====================================================== -->
-<div id="detail-panel" class="detail-panel hidden">
-    <h2 id="detail-title">—</h2>
-    <p><b>Adresse :</b> <span id="detail-address">—</span></p>
-    <p><b>Commune :</b> <span id="detail-town">—</span></p>
-    <p><b>Statut :</b> <span id="detail-status">—</span></p>
-    <p><b>Distance piste :</b> <span id="detail-distance">—</span></p>
-</div>
+    <!-- ======================================================
+         DEBUG PANEL
+    ====================================================== -->
+    <div id="debug-panel" class="debug-panel">
+        <div>FPS : <span id="fps">0</span></div>
+        <div>CPU : <span id="cpu">0</span> ms</div>
+        <div>Render : <span id="render">0</span> ms</div>
+    </div>
 
+    <!-- ======================================================
+         JAVASCRIPT (ORDRE CORRIGÉ)
+    ====================================================== -->
 
-<!-- ======================================================
-     MAP
-====================================================== -->
-<div id="map"></div>
+    <!-- Leaflet core -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <!-- MarkerCluster -->
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
-<!-- ======================================================
-     FLOATING BUTTONS
-====================================================== -->
-<div class="floating-buttons">
+    <!-- Heatmap plugin -->
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
-    <button id="toggle-heatmap" class="float-btn">
-        Heatmap
-    </button>
+    <!-- PolylineDecorator plugin -->
+    <script src="https://unpkg.com/leaflet-polylinedecorator"></script>
 
-    <button id="toggle-clusters" class="float-btn">
-        Clusters
-    </button>
-
-    <button id="play-history" class="float-btn">
-        Historique
-    </button>
-
-</div>
-
-
-<!-- ======================================================
-     DEBUG PANEL
-====================================================== -->
-<div id="debug-panel" class="debug-panel">
-    <div>FPS : <span id="fps">0</span></div>
-    <div>CPU : <span id="cpu">0</span> ms</div>
-    <div>Render : <span id="render">0</span> ms</div>
-</div>
-
-
-<!-- ======================================================
-     SCRIPTS
-====================================================== -->
-
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- MarkerCluster -->
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
-
-<!-- App -->
-<script type="module" src="./app.js?v=98"></script>
+    <!-- App -->
+    <script type="module" src="./app.js?v=99"></script>
 
 </body>
 </html>
